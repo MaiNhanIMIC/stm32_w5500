@@ -385,6 +385,7 @@ int8_t ctlnetwork(ctlnetwork_type cntype, void* arg)
 
 void wizchip_sw_reset(void)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t gw[4], sn[4], sip[4];
    uint8_t mac[6];
 //A20150601
@@ -406,10 +407,12 @@ void wizchip_sw_reset(void)
    setGAR(gw);
    setSUBR(sn);
    setSIPR(sip);
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 int8_t wizchip_init(uint8_t* txsize, uint8_t* rxsize)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    int8_t i;
    int8_t tmp = 0;
    wizchip_sw_reset();
@@ -457,11 +460,13 @@ int8_t wizchip_init(uint8_t* txsize, uint8_t* rxsize)
       for(i = 0 ; i < _WIZCHIP_SOCK_NUM_; i++)
          setSn_RXBUF_SIZE(i, rxsize[i]);
    }
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
    return 0;
 }
 
 void wizchip_clrinterrupt(intr_kind intr)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t ir  = (uint8_t)intr;
    uint8_t sir = (uint8_t)((uint16_t)intr >> 8);
 #if _WIZCHIP_ < 5500
@@ -485,10 +490,12 @@ void wizchip_clrinterrupt(intr_kind intr)
    setIR(ir);
    setSIR(sir);
 #endif   
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 intr_kind wizchip_getinterrupt(void)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t ir  = 0;
    uint8_t sir = 0;
    uint16_t ret = 0;
@@ -515,11 +522,13 @@ intr_kind wizchip_getinterrupt(void)
 #endif
   ret = sir;
   ret = (ret << 8) + ir;
+  LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
   return (intr_kind)ret;
 }
 
 void wizchip_setinterruptmask(intr_kind intr)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t imr  = (uint8_t)intr;
    uint8_t simr = (uint8_t)((uint16_t)intr >> 8);
 #if _WIZCHIP_ < 5500
@@ -540,10 +549,12 @@ void wizchip_setinterruptmask(intr_kind intr)
    setIMR(imr);
    setSIMR(simr);
 #endif   
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 intr_kind wizchip_getinterruptmask(void)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t imr  = 0;
    uint8_t simr = 0;
    uint16_t ret = 0;
@@ -568,11 +579,13 @@ intr_kind wizchip_getinterruptmask(void)
 #endif
   ret = simr;
   ret = (ret << 8) + imr;
+  LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
   return (intr_kind)ret;
 }
 
 int8_t wizphy_getphylink(void)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    int8_t tmp;
 #if   _WIZCHIP_ == 5200
    if(getPHYSTATUS() & PHYSTATUS_LINK)
@@ -587,6 +600,7 @@ int8_t wizphy_getphylink(void)
 #else
    tmp = -1;
 #endif
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
    return tmp;
 }
 
@@ -594,6 +608,7 @@ int8_t wizphy_getphylink(void)
 
 int8_t wizphy_getphypmode(void)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    int8_t tmp = 0;
    #if   _WIZCHIP_ == 5200
       if(getPHYSTATUS() & PHYSTATUS_POWERDOWN)
@@ -608,6 +623,7 @@ int8_t wizphy_getphypmode(void)
    #else
       tmp = -1;
    #endif
+  LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
    return tmp;
 }
 #endif
@@ -615,16 +631,19 @@ int8_t wizphy_getphypmode(void)
 #if _WIZCHIP_ == 5500
 void wizphy_reset(void)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t tmp = getPHYCFGR();
    tmp &= PHYCFGR_RST;
    setPHYCFGR(tmp);
    tmp = getPHYCFGR(); 
    tmp |= ~PHYCFGR_RST;
    setPHYCFGR(tmp);
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 void wizphy_setphyconf(wiz_PhyConf* phyconf)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t tmp = 0;
    if(phyconf->by == PHY_CONFBY_SW)
       tmp |= PHYCFGR_OPMD;
@@ -651,10 +670,12 @@ void wizphy_setphyconf(wiz_PhyConf* phyconf)
    }
    setPHYCFGR(tmp);
    wizphy_reset();
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 void wizphy_getphyconf(wiz_PhyConf* phyconf)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t tmp = 0;
    tmp = getPHYCFGR();
    phyconf->by   = (tmp & PHYCFGR_OPMD) ? PHY_CONFBY_SW : PHY_CONFBY_HW;
@@ -690,17 +711,21 @@ void wizphy_getphyconf(wiz_PhyConf* phyconf)
          phyconf->duplex = PHY_DUPLEX_HALF;
          break;
    }
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 void wizphy_getphystat(wiz_PhyConf* phyconf)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t tmp = getPHYCFGR();
    phyconf->duplex = (tmp & PHYCFGR_DPX_FULL) ? PHY_DUPLEX_FULL : PHY_DUPLEX_HALF;
    phyconf->speed  = (tmp & PHYCFGR_SPD_100) ? PHY_SPEED_100 : PHY_SPEED_10;
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 int8_t wizphy_setphypmode(uint8_t pmode)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t tmp = 0;
    tmp = getPHYCFGR();
    if((tmp & PHYCFGR_OPMD)== 0) return -1;
@@ -720,6 +745,7 @@ int8_t wizphy_setphypmode(uint8_t pmode)
    {
       if(tmp & PHYCFGR_OPMDC_ALLA) return 0;
    }
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
    return -1;
 }
 #endif
@@ -727,6 +753,7 @@ int8_t wizphy_setphypmode(uint8_t pmode)
 
 void wizchip_setnetinfo(wiz_NetInfo* pnetinfo)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    setSHAR(pnetinfo->mac);
    setGAR(pnetinfo->gw);
    setSUBR(pnetinfo->sn);
@@ -736,10 +763,12 @@ void wizchip_setnetinfo(wiz_NetInfo* pnetinfo)
    _DNS_[2] = pnetinfo->dns[2];
    _DNS_[3] = pnetinfo->dns[3];
    _DHCP_   = pnetinfo->dhcp;
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 void wizchip_getnetinfo(wiz_NetInfo* pnetinfo)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    getSHAR(pnetinfo->mac);
    getGAR(pnetinfo->gw);
    getSUBR(pnetinfo->sn);
@@ -749,10 +778,12 @@ void wizchip_getnetinfo(wiz_NetInfo* pnetinfo)
    pnetinfo->dns[2]= _DNS_[2];
    pnetinfo->dns[3]= _DNS_[3];
    pnetinfo->dhcp  = _DHCP_;
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 int8_t wizchip_setnetmode(netmode_type netmode)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    uint8_t tmp = 0;
 #if _WIZCHIP_ != 5500   
    if(netmode & ~(NM_WAKEONLAN | NM_PPPOE | NM_PINGBLOCK)) return -1;
@@ -762,22 +793,30 @@ int8_t wizchip_setnetmode(netmode_type netmode)
    tmp = getMR();
    tmp |= (uint8_t)netmode;
    setMR(tmp);
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
    return 0;
 }
 
 netmode_type wizchip_getnetmode(void)
 {
-   return (netmode_type) getMR();
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
+	netmode_type ret = getMR();
+	LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
+   return ret;
 }
 
 void wizchip_settimeout(wiz_NetTimeout* nettime)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    setRCR(nettime->retry_cnt);
    setRTR(nettime->time_100us);
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }
 
 void wizchip_gettimeout(wiz_NetTimeout* nettime)
 {
+	LOG_DEBUG("%s:%d begin \n", __FUNCTION__, __LINE__);
    nettime->retry_cnt = getRCR();
    nettime->time_100us = getRTR();
+   LOG_DEBUG("%s:%d end \n", __FUNCTION__, __LINE__);
 }

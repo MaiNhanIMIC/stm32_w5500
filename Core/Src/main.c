@@ -64,20 +64,24 @@ static void MX_USART2_UART_Init(void);
 
 void cs_sel() {
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET); //CS LOW
+	// printf("\t-----start----- \n");
 }
 
 void cs_desel() {
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //CS HIGH
+	// printf("\t-----end----- \n");
 }
 
 uint8_t spi_rb(void) {
 	uint8_t rbuf;
 	HAL_SPI_Receive(&hspi1, &rbuf, 1, HAL_MAX_DELAY);
+	printf("\t%s: <- 0x%.2x \n", __FUNCTION__, rbuf);
 	return rbuf;
 }
 
 void spi_wb(uint8_t b) {
 	HAL_SPI_Transmit(&hspi1, &b, 1, HAL_MAX_DELAY);
+	printf("\t%s: -> 0x%.2x \n", __FUNCTION__, b);
 }
 
 
@@ -137,12 +141,12 @@ int main(void)
   wiz_NetInfo netInfoGet = {0};
   do
   {
-	  printf(".");
+	  //printf(".");
 	  wizchip_setnetinfo(&netInfo);
 	  wizchip_getnetinfo(&netInfoGet);
 	  HAL_Delay(1000);
   } while(netInfoGet.ip[0] == 0 && netInfoGet.ip[1] == 0 && netInfoGet.ip[2] == 0 && netInfoGet.ip[3] == 0);
-  printf("OK \r\n");
+  //printf("OK \r\n");
   printf("  MAC ADDRESS: %x:%x:%x:%x:%x:%x\r\n",
   		  	  	  	  	  	  	  	  	  	  netInfo.mac[0], netInfo.mac[1], netInfo.mac[2],
   											  netInfo.mac[3], netInfo.mac[4], netInfo.mac[5]);

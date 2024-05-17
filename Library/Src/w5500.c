@@ -53,6 +53,7 @@
 //*****************************************************************************
 //#include <stdio.h>
 #include "w5500.h"
+#include "debug_log.h"
 
 #define _W5500_SPI_VDM_OP_          0x00
 #define _W5500_SPI_FDM_OP_LEN1_     0x01
@@ -89,6 +90,7 @@ uint8_t  WIZCHIP_READ(uint32_t AddrSel)
 
    WIZCHIP.CS._deselect();
    WIZCHIP_CRITICAL_EXIT();
+   LOG_DEBUG("%s: addr 0x%.4x | val: 0x%.2x \n", __FUNCTION__, AddrSel,ret);
    return ret;
 }
 
@@ -119,6 +121,7 @@ void     WIZCHIP_WRITE(uint32_t AddrSel, uint8_t wb )
    }
 
    WIZCHIP.CS._deselect();
+   LOG_DEBUG("%s: addr 0x%.4x | val: 0x%.2x \n", __FUNCTION__, AddrSel, wb);
    WIZCHIP_CRITICAL_EXIT();
 }
          
@@ -148,9 +151,14 @@ void     WIZCHIP_READ_BUF (uint32_t AddrSel, uint8_t* pBuf, uint16_t len)
 		WIZCHIP.IF.SPI._write_burst(spi_data, 3);
 		WIZCHIP.IF.SPI._read_burst(pBuf, len);
    }
-
-   WIZCHIP.CS._deselect();
    WIZCHIP_CRITICAL_EXIT();
+   LOG_DEBUG("%s: addr 0x%.4x |  val: [", __FUNCTION__, AddrSel);
+   for(int i = 0; i < len; i++)
+   {
+      LOG_DEBUG("0x%.2x, ", pBuf[i]);
+   }
+   LOG_DEBUG("\b\b]\n");
+   WIZCHIP.CS._deselect();
 }
 
 void     WIZCHIP_WRITE_BUF(uint32_t AddrSel, uint8_t* pBuf, uint16_t len)
@@ -182,6 +190,13 @@ void     WIZCHIP_WRITE_BUF(uint32_t AddrSel, uint8_t* pBuf, uint16_t len)
 
    WIZCHIP.CS._deselect();
    WIZCHIP_CRITICAL_EXIT();
+   LOG_DEBUG("%s: addr 0x%.4x |  val: [", __FUNCTION__, AddrSel);
+   for(int i = 0; i < len; i++)
+   {
+      LOG_DEBUG("0x%.2x, ", pBuf[i]);
+   }
+   LOG_DEBUG("\b\b]\n");
+   WIZCHIP.CS._deselect();
 }
 
 
